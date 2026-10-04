@@ -1,0 +1,54 @@
+{
+  "name": "هوشیکا (Hooshika)",
+  "tagline": "رباتِ معلمِ تو",
+  "version": "hooshika-academy-2.0",
+  "created": "2026-10-03",
+  "updated": "2026-10-04",
+  "replaces": "javaneh-academy (archive/index-v1.html)",
+  "font_embedded": true,
+  "standalone": true,
+  "mascot": "هوشیکا — ربات معلم با کلاه فارغ‌التحصیلی و حالت‌های احساسی",
+  "accounts": {
+    "panel": true,
+    "methods": ["phone-otp", "email-password", "guest"],
+    "storage": "localStorage (per browser)",
+    "cloud": false,
+    "sms_email_delivery": "demo-code-on-screen"
+  },
+  "onboarding": {
+    "goal_picker": true,
+    "course_picker": true,
+    "motivation": true,
+    "experience": true,
+    "adaptive_placement_quiz": { "questions": 5, "levels": 5, "adaptive": true }
+  },
+  "curriculum": {
+    "categories": 9,
+    "courses": 76,
+    "lessons": 853,
+    "includes_game_dev": true,
+    "includes_all_languages": true,
+    "live_code_editor": true
+  },
+  "engagement": {
+    "xp": true,
+    "daily_missions": 3,
+    "weekly_challenge": true,
+    "streak": true,
+    "achievements": 24,
+    "levels": 7
+  },
+  "leagues": {
+    "weekly": true,
+    "monthly": true,
+    "tiers": ["bronze", "silver", "gold", "diamond", "legend"],
+    "rivals": "simulated training bots",
+    "real_multiplayer": false
+  },
+  "profile_menu": true,
+  "motion_layers": ["particles", "scroll-reveal", "3d-bubble-chips", "card-tilt", "confetti", "cursor-glow", "scroll-progress"],
+  "reduced_motion_support": true,
+  "online_ai": false,
+  "index_sha256": "9aec44c7a3a4dc264194c7d5eb06946be3536aa8ba7f7c96a544d1012775816c",
+  "notes": "بدون بک‌اند؛ رقبا شبیه‌سازی‌شده و کد پیامک/ایمیل نمایشی است."
+}

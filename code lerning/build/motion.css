@@ -1,0 +1,566 @@
+/* ============================================================
+   جوانه · لایهٔ حرکت سینمایی (Motion Layer)
+   این لایه بعد از همهٔ استایل‌های قبلی بارگذاری می‌شود.
+   ============================================================ */
+
+:root{
+  --fx-ice:#b4d9ff;
+  --fx-ice-soft:#8dbdff;
+  --fx-navy:#080f24;
+  --fx-ink:#101d39;
+  --fx-ease:cubic-bezier(.22,.72,.28,1);
+  --fx-shadow:0 34px 80px -28px #000000a6;
+}
+
+html{scroll-behavior:smooth}
+::selection{background:#b4d9ff3d;color:#f2f8ff}
+main{--px:0;--py:0;isolation:isolate}
+#root{scrollbar-color:#3a5482 transparent;scrollbar-width:thin}
+#root::-webkit-scrollbar{width:11px}
+#root::-webkit-scrollbar-track{background:#070d1e}
+#root::-webkit-scrollbar-thumb{
+  background:linear-gradient(#b4d9ff59,#5d86c266);
+  border:3px solid #070d1e;border-radius:20px;
+}
+#root::-webkit-scrollbar-thumb:hover{background:linear-gradient(#cfe5ff88,#7ea6dd88)}
+
+/* ---------- پس‌زمینهٔ زنده: شفق + دانه + بافت ---------- */
+.grain{opacity:1}
+.grain::after{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.06;z-index:0;
+  background-image:radial-gradient(#b4d9ff .6px,transparent .6px);background-size:4px 4px;
+}
+.grain::before{
+  content:"";position:fixed;left:50%;top:-38vmax;width:150vmax;height:150vmax;
+  translate:-50% 0;pointer-events:none;z-index:0;opacity:.5;
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      #4d86f000 0deg,#4d86f02e 42deg,#a06bff1c 92deg,#4d86f000 150deg,
+      #3fd0ff1f 208deg,#7b5cff17 262deg,#4d86f000 320deg);
+  filter:blur(30px);
+  animation:fx-aurora-spin 46s linear infinite;
+}
+main::after{
+  content:"";position:fixed;inset:-10% -6%;pointer-events:none;z-index:0;opacity:.55;
+  background:
+    radial-gradient(38% 30% at 16% 24%,#5f8cff2b,transparent 70%),
+    radial-gradient(34% 28% at 84% 18%,#9d6bff1f,transparent 70%),
+    radial-gradient(46% 34% at 62% 92%,#3ec9ff1a,transparent 72%);
+  animation:fx-aurora-breathe 19s ease-in-out infinite;
+}
+main > *{position:relative;z-index:1}
+
+/* ---------- نوار پیشرفت اسکرول ---------- */
+.scroll-progress{
+  position:fixed;top:0;right:0;left:0;height:3px;z-index:90;pointer-events:none;
+  background:linear-gradient(90deg,#b4d9ff00,#b4d9ff12);
+}
+.scroll-progress i{
+  display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#8dbdff,#d9edff 45%,#a58bff);
+  box-shadow:0 0 14px #9dccffcc,0 0 34px #7f9cff66;
+  transition:width .12s linear;
+}
+
+/* ---------- بوم ذرات + درخشش نشانگر ---------- */
+.fx-canvas{
+  position:fixed;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:.95;
+}
+.cursor-glow{
+  position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;z-index:3;
+  pointer-events:none;opacity:0;transition:opacity .5s ease;mix-blend-mode:screen;
+  background:radial-gradient(circle,#8dbdff1f 0,#8dbdff0d 34%,transparent 66%);
+}
+main:not(.still) .cursor-glow{opacity:1}
+
+/* ---------- نمایان‌شدن هنگام اسکرول ---------- */
+main:not(.still) .fx-in{opacity:0;translate:0 30px;filter:blur(7px)}
+main:not(.still) .fx-in.fx-shown{
+  opacity:1;translate:0 0;filter:blur(0);
+  transition:opacity .85s var(--fx-ease),translate .85s var(--fx-ease),filter .9s var(--fx-ease);
+}
+main.still .fx-in{opacity:1}
+
+/* ---------- تیتر قهرمان: گرادیان متحرک و خط کشیده‌شده ---------- */
+.hero h1{position:relative}
+.build-word{
+  background:linear-gradient(100deg,#dcecff 6%,#8dbdff 32%,#c9a8ff 56%,#dcecff 84%);
+  background-size:260% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:fx-shimmer 7.5s ease-in-out infinite;
+}
+.build-word svg path{
+  stroke-dasharray:320;stroke-dashoffset:320;
+  animation:fx-draw 1.6s var(--fx-ease) .5s forwards;
+}
+main.still .build-word svg path{stroke-dashoffset:0}
+.full-stop{animation:fx-pulse-dot 3.4s ease-in-out infinite}
+.eyebrow>span{animation:fx-beacon 2.8s ease-in-out infinite}
+.hero-copy{animation:fx-rise 1s var(--fx-ease) both}
+.hero-copy h1{animation:fx-rise 1.05s var(--fx-ease) .06s both}
+.intro{animation:fx-rise 1.1s var(--fx-ease) .14s both}
+.hero-actions{animation:fx-rise 1.1s var(--fx-ease) .22s both}
+.lesson-meta{animation:fx-rise 1.15s var(--fx-ease) .3s both}
+.studio{animation:fx-rise-soft 1.3s var(--fx-ease) .18s both}
+
+/* ---------- حلقه‌های مداری زنده ---------- */
+.orbit,.orbit-two{will-change:transform}
+.orbit::before,.orbit::after{
+  content:"";position:absolute;inset:-2px;border-radius:50%;pointer-events:none;
+}
+.orbit::before{
+  border-top:2px solid #b4d9ff7a;border-right:2px solid #b4d9ff1f;
+  animation:fx-spin 9s linear infinite;
+}
+.orbit::after{
+  inset:16px;border-bottom:2px solid #c9a8ff59;border-left:2px solid #b4d9ff14;
+  animation:fx-spin-rev 15s linear infinite;
+}
+.orbit-two::before{
+  border-top-color:#8dbdff4d;border-right-color:transparent;
+  animation:fx-spin 22s linear infinite;
+}
+.orbit-two::after{inset:34px;border-bottom-color:#a5cbfc3d;animation:fx-spin-rev 30s linear infinite}
+
+/* ---------- شناوری + پارالاکس ماوس ---------- */
+@keyframes fx-float-a{
+  0%,100%{translate:calc(var(--px,0)*7px) calc(var(--py,0)*7px)}
+  50%{translate:calc(var(--px,0)*7px) calc(var(--py,0)*7px - 13px)}
+}
+@keyframes fx-float-b{
+  0%,100%{translate:calc(var(--px,0)*13px) calc(var(--py,0)*13px)}
+  50%{translate:calc(var(--px,0)*13px) calc(var(--py,0)*13px + 15px)}
+}
+@keyframes fx-float-c{
+  0%,100%{translate:calc(var(--px,0)*20px) calc(var(--py,0)*20px)}
+  50%{translate:calc(var(--px,0)*20px) calc(var(--py,0)*20px - 9px)}
+}
+.live-pill{animation:fx-float-a 7.5s ease-in-out infinite}
+.float-symbol{animation:fx-float-b 9.5s ease-in-out infinite}
+.float-symbol.symbol-two{animation-delay:-4s;animation-duration:11s}
+.hand-note{animation:fx-float-c 8.5s ease-in-out infinite}
+.brand-icon{rotate:-7deg;animation:fx-float-a 8s ease-in-out infinite}
+.lesson-icon{animation:fx-float-b 8.6s ease-in-out infinite}
+.orb-center{animation:fx-float-a 9.2s ease-in-out infinite}
+.summary-icon{animation:fx-float-b 8.8s ease-in-out infinite}
+.step-marker{animation:fx-float-c 10s ease-in-out infinite}
+.chapter-icon{animation:fx-float-a 9.4s ease-in-out infinite}
+.chapter-item:nth-child(2n) .chapter-icon{animation-name:fx-float-b;animation-duration:10.4s}
+.chapter-item:nth-child(3n) .chapter-icon{animation-name:fx-float-c;animation-duration:11.4s}
+.read-tick{animation:fx-pop .5s var(--fx-ease) both}
+
+/* ---------- کاشی‌های شیشه‌ای: تیلت سه‌بعدی + درخشش ---------- */
+.fx-tilt{
+  position:relative;
+  transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0);
+  transform-style:preserve-3d;
+  transition:transform .45s var(--fx-ease),box-shadow .45s var(--fx-ease),border-color .4s ease;
+  will-change:transform;
+}
+.fx-tilt::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  transition:opacity .45s ease;mix-blend-mode:screen;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),#cfe4ff26,transparent 62%);
+}
+.fx-tilt:hover::after,.fx-tilt:focus-within::after{opacity:1}
+.fx-tilt:hover,.fx-tilt:focus-within{box-shadow:var(--fx-shadow),0 0 60px -22px #8dbdff8c;border-color:#b4d9ff5c}
+.workbench.fx-tilt{rotate:-2deg}
+.workbench.fx-tilt:hover,.workbench.fx-tilt:focus-within{rotate:0deg}
+.chapter-item.fx-tilt{transform:perspective(1400px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.road-step.fx-tilt,.onboarding-panel.fx-tilt,.chapter-item.fx-tilt{--tilt-max:3}
+
+/* ---------- دکمه‌های مغناطیسی و درخشان ---------- */
+.primary,.nav-start,.run,.plan-link,.academy button[data-slot=button],.motion-toggle{
+  transition:transform .35s var(--fx-ease),box-shadow .35s var(--fx-ease),background .3s ease,color .3s ease;
+}
+.primary{position:relative;overflow:hidden}
+.primary::after{
+  content:"";position:absolute;top:0;bottom:0;width:44%;right:-60%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,#ffffff8c,transparent);
+  transform:skewX(-18deg);animation:fx-sheen 4.6s ease-in-out infinite;
+}
+.primary:hover{translate:0 -3px;box-shadow:0 18px 44px -12px #8dbdff6b}
+.primary:active{translate:0 0}
+.nav-start:hover{box-shadow:0 0 34px -8px #9dccff5c}
+.run:hover{box-shadow:0 0 26px -6px #b4d9ff70}
+.plan-link{position:relative;overflow:hidden;box-shadow:0 12px 34px -14px #b4d9ff9c}
+.plan-link:hover{translate:0 -3px;box-shadow:0 20px 46px -14px #b4d9ffcc}
+.answer-option{position:relative;overflow:hidden}
+.answer-option::before{
+  content:"";position:absolute;inset:0;opacity:0;transition:opacity .35s ease;pointer-events:none;
+  background:linear-gradient(120deg,#b4d9ff1f,transparent 60%);
+}
+.answer-option:hover::before{opacity:1}
+.answer-option[data-state=on]{animation:fx-option-on .45s var(--fx-ease)}
+main:not(.still) .answer-options .answer-option{animation:fx-rise .55s var(--fx-ease) both}
+main:not(.still) .answer-options .answer-option:nth-child(2){animation-delay:.06s}
+main:not(.still) .answer-options .answer-option:nth-child(3){animation-delay:.12s}
+main:not(.still) .answer-options .answer-option:nth-child(4){animation-delay:.18s}
+main:not(.still) .answer-options .answer-option:nth-child(5){animation-delay:.24s}
+main:not(.still) .answer-options .answer-option:nth-child(6){animation-delay:.3s}
+
+/* ---------- آکاردئون بخش‌ها ---------- */
+.chapter-trigger{position:relative;transition:background .4s ease,padding .4s var(--fx-ease)}
+.chapter-trigger::before{
+  content:"";position:absolute;right:0;top:50%;translate:0 -50%;height:0;width:3px;border-radius:9px;
+  background:linear-gradient(#b4d9ff,#c9a8ff);transition:height .45s var(--fx-ease);opacity:.9;
+}
+.chapter-item[data-state=open] .chapter-trigger::before{height:62%}
+.chapter-item[data-state=open] .chapter-icon{color:#eaf4ff;box-shadow:inset 0 1px 0 #ffffff66,0 0 40px -6px #9dccff8c}
+.chapter-item[data-state=open] .chapter-heading strong{color:#f4f9ff;text-shadow:0 0 26px #9dccff40}
+.chapter-content[data-state=open]{animation:fx-content-in .55s var(--fx-ease) both}
+.lesson-parts article{transition:transform .45s var(--fx-ease),border-color .4s ease}
+.lesson-parts article:hover{transform:translateY(-4px)}
+.tiny-exercise{position:relative;overflow:hidden}
+.tiny-exercise::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),#b4d9ff1c,transparent 70%);
+}
+.road-step::before,.faq-item::before,.tool-card::before,.stat-card::before,.showcase-card::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1px;opacity:0;
+  background:linear-gradient(140deg,#b4d9ff8c,#c9a8ff4d,transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  transition:opacity .45s ease;
+}
+.road-step:hover::before,.faq-item:hover::before,.tool-card:hover::before,.stat-card:hover::before,.showcase-card:hover::before{opacity:1}
+
+/* ---------- نقشهٔ راه ---------- */
+.road-step{position:relative;transition:background .4s ease,transform .45s var(--fx-ease)}
+.road-step.completed{box-shadow:inset 0 0 0 1px #b4d9ff3d,0 22px 60px -30px #9dccff8c}
+.road-step.completed .step-marker{
+  background:linear-gradient(140deg,#d9edff,#8dbdff);color:#0d1a33;border-color:#e6f2ff;
+  box-shadow:0 0 30px -6px #b4d9ffcc;
+}
+.road-step.completed .step-body h3{color:#f2f8ff}
+main:not(.still) .roadmap-list .road-step{animation:fx-rise .6s var(--fx-ease) both}
+main:not(.still) .roadmap-list .road-step:nth-child(2){animation-delay:.07s}
+main:not(.still) .roadmap-list .road-step:nth-child(3){animation-delay:.14s}
+main:not(.still) .roadmap-list .road-step:nth-child(4){animation-delay:.21s}
+main:not(.still) .roadmap-list .road-step:nth-child(5){animation-delay:.28s}
+main:not(.still) .roadmap-list .road-step:nth-child(6){animation-delay:.35s}
+main:not(.still) .roadmap-list .road-step:nth-child(7){animation-delay:.42s}
+main:not(.still) .roadmap-list .road-step:nth-child(8){animation-delay:.49s}
+.plan-summary{animation:fx-pop .6s var(--fx-ease) both}
+.roadmap-section{animation:fx-rise .7s var(--fx-ease) both}
+
+/* ---------- نوارهای پیشرفت ---------- */
+.onboarding-form [role=progressbar],.chapter-progress [role=progressbar],.roadmap-progress [role=progressbar]{
+  position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px #b4d9ff1f;
+}
+.onboarding-form [role=progressbar] > *,.chapter-progress [role=progressbar] > *,.roadmap-progress [role=progressbar] > *{
+  position:relative;overflow:hidden;
+  background:linear-gradient(90deg,#8dbdff,#d9edff 60%,#c9a8ff)!important;
+  box-shadow:0 0 18px -2px #9dccffcc;transition:width .6s var(--fx-ease);
+}
+.onboarding-form [role=progressbar] > *::after,.chapter-progress [role=progressbar] > *::after,.roadmap-progress [role=progressbar] > *::after{
+  content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent,#ffffff7a,transparent);
+  animation:fx-sheen 2.6s linear infinite;
+}
+.chapter-progress,.roadmap-progress{font-variant-numeric:tabular-nums}
+
+/* ---------- قهرمان: کف شبکه‌ای و هالهٔ استودیو ---------- */
+.hero{position:relative}
+.hero::before{
+  content:"";position:absolute;left:50%;bottom:-2px;width:130%;height:230px;translate:-50% 0;
+  pointer-events:none;opacity:.5;z-index:0;
+  background:
+    linear-gradient(#b4d9ff00 0,#b4d9ff12 70%,#b4d9ff00 100%),
+    repeating-linear-gradient(90deg,#b4d9ff1f 0 1px,transparent 1px 74px);
+  mask-image:linear-gradient(#0000,#000 78%,#0000);
+  animation:fx-grid 9s linear infinite;
+}
+.studio::before{
+  content:"";position:absolute;left:50%;top:50%;width:112%;height:118%;translate:-50% -50%;
+  border-radius:50%;pointer-events:none;z-index:0;opacity:.75;
+  background:radial-gradient(closest-side,#8dbdff1c,transparent 72%);
+  animation:fx-breathe 8.5s ease-in-out infinite;
+}
+.workbench::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  transition:opacity .5s ease;mix-blend-mode:screen;
+  background:radial-gradient(460px circle at var(--mx,50%) var(--my,0%),#cfe4ff24,transparent 64%);
+}
+.workbench.fx-tilt:hover::after{opacity:1}
+.editor{position:relative}
+.editor::after{
+  content:"";position:absolute;left:0;right:0;height:74px;top:0;pointer-events:none;opacity:.55;
+  background:linear-gradient(#9dccff14,transparent);animation:fx-scan 6.5s ease-in-out infinite;
+}
+.input-row input{transition:box-shadow .35s ease,border-color .3s ease,background .3s ease}
+.input-row input:focus{box-shadow:0 0 0 3px #9dccff26,0 0 30px -8px #b4d9ff8c}
+.result{transition:background .5s ease,box-shadow .5s ease}
+.result h2{animation:fx-pop .6s var(--fx-ease) both;text-shadow:0 0 34px color-mix(in srgb,var(--seed-color) 45%,transparent)}
+.result-star{animation:fx-star 5.5s ease-in-out infinite}
+.plant{animation:fx-float-a 6.5s ease-in-out infinite}
+.preview-status i{animation:fx-beacon 2.2s ease-in-out infinite}
+.window-dots i{transition:transform .3s var(--fx-ease)}
+.workbench:hover .window-dots i{transform:scale(1.25)}
+.workbench-footer button:hover{color:#dcecff;rotate:180deg}
+
+/* ---------- نشانگر ناوبری شیشه‌ای (Dock) ---------- */
+.fx-dock{
+  position:fixed;left:18px;bottom:22px;z-index:80;display:none;flex-direction:column;gap:10px;
+  padding:12px 10px;border-radius:22px;opacity:0;translate:-14px 0;transition:opacity .6s ease,translate .6s var(--fx-ease);
+  background:linear-gradient(150deg,#a5cbfc1a,#a5cbfc08);border:1px solid #b4d9ff30;
+  box-shadow:inset 0 1px 0 #ffffff26,0 26px 60px -22px #000000a6;backdrop-filter:blur(18px);
+}
+@media(min-width:901px){.fx-dock{display:flex}}
+.fx-dock.fx-ready{opacity:1;translate:0 0}
+.fx-dock a,.fx-dock button{
+  position:relative;display:grid;place-items:center;width:42px;height:42px;border-radius:14px;
+  color:#cfe4ff;background:#0a132a66;border:1px solid #b4d9ff26;font-size:18px;cursor:pointer;
+  transition:transform .35s var(--fx-ease),background .3s ease,color .3s ease,box-shadow .35s ease;
+}
+.fx-dock a:hover,.fx-dock button:hover{
+  background:linear-gradient(140deg,#b4d9ff3d,#b4d9ff12);color:#f2f8ff;translate:0 -2px;
+  box-shadow:0 0 26px -6px #9dccff8c;
+}
+.fx-dock a.fx-active{background:linear-gradient(140deg,#d0e7ff,#8dbdff);color:#0d1a33;border-color:#e6f2ff;box-shadow:0 0 30px -6px #b4d9ffcc}
+.fx-dock a::after,.fx-dock button::after{
+  content:attr(data-label);position:absolute;left:118%;top:50%;translate:0 -50%;
+  white-space:nowrap;font-size:14px;color:#dcecff;background:#0c1730e6;border:1px solid #b4d9ff2e;
+  padding:6px 11px;border-radius:11px;opacity:0;pointer-events:none;transition:opacity .3s ease,translate .3s var(--fx-ease);
+  backdrop-filter:blur(12px);
+}
+.fx-dock a:hover::after,.fx-dock button:hover::after{opacity:1;translate:6px -50%}
+
+/* ---------- نوار متحرک موضوع‌ها ---------- */
+.ticker{
+  position:relative;margin:22px auto 0;max-width:1400px;overflow:hidden;
+  border-top:1px solid #b4d9ff17;border-bottom:1px solid #b4d9ff17;
+  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+}
+.ticker{direction:ltr}
+.ticker-track{
+  display:flex;align-items:center;gap:0;padding:19px 0;width:max-content;
+  animation:fx-marquee 34s linear infinite;
+}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker span{
+  font-family:Lalezar,sans-serif;font-size:21px;color:#c7d8ee;white-space:nowrap;
+  display:flex;align-items:center;gap:38px;padding-right:38px;
+}
+.ticker i{color:#b4d9ff;font-style:normal;font-size:15px;opacity:.8}
+
+/* ---------- نوار پرش سریع: حباب‌های سه‌بعدی شناور ---------- */
+.fx-chips{
+  display:flex;flex-wrap:wrap;gap:12px;padding:26px 0 6px;max-width:1400px;margin:0 auto;
+  perspective:900px;
+}
+.fx-chips a{
+  position:relative;isolation:isolate;overflow:hidden;
+  font-size:16px;color:#c7d8ee;padding:10px 19px;border-radius:30px;
+  border:1px solid #b4d9ff2e;
+  background:
+    radial-gradient(120% 160% at 30% 8%,#ffffff2e,transparent 46%),
+    radial-gradient(90% 130% at 78% 108%,#9dccff33,transparent 58%),
+    linear-gradient(150deg,#b4d9ff1c,#b4d9ff05);
+  box-shadow:inset 0 1px 0 #ffffff33,inset 0 -7px 14px -6px #b4d9ff33,0 12px 26px -14px #000000a6;
+  backdrop-filter:blur(14px);
+  transform:perspective(620px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transform-style:preserve-3d;will-change:transform,translate,scale;
+  transition:transform .3s var(--fx-ease),translate .3s var(--fx-ease),scale .3s var(--fx-ease),color .3s ease,box-shadow .35s var(--fx-ease),border-color .3s ease;
+}
+/* درخششِ پشتِ حباب */
+.fx-chips a::before{
+  content:"";position:absolute;z-index:-1;inset:-30% -12%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 50% 55%,#b4d9ff4d,transparent 66%);
+  opacity:0;filter:blur(10px);transition:opacity .4s ease;
+}
+/* نقطهٔ براق: --mx/--my را موتور حرکت با موقعیت ماوس پر می‌کند. */
+.fx-chips a::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  opacity:0;transition:opacity .35s ease;mix-blend-mode:screen;
+  background:radial-gradient(58px circle at var(--mx,50%) var(--my,50%),#eaf4ff8c,transparent 62%);
+}
+.fx-chips a:hover,.fx-chips a:focus-visible{
+  color:#f6faff;border-color:#d9edff7a;
+  scale:1.08;
+  box-shadow:
+    inset 0 1px 0 #ffffff66,
+    inset 0 -10px 18px -8px #b4d9ff4d,
+    0 20px 40px -14px #8dbdff9c,
+    0 0 44px -10px #9dccff7a;
+}
+.fx-chips a:hover::before,.fx-chips a:focus-visible::before{opacity:1}
+.fx-chips a:hover::after,.fx-chips a:focus-visible::after{opacity:.9}
+main:not(.still) .fx-chips a{animation:fx-chip-idle 7s ease-in-out infinite}
+main:not(.still) .fx-chips a:nth-child(2){animation-delay:-1.1s}
+main:not(.still) .fx-chips a:nth-child(3){animation-delay:-2.2s}
+main:not(.still) .fx-chips a:nth-child(4){animation-delay:-3.3s}
+main:not(.still) .fx-chips a:nth-child(5){animation-delay:-4.4s}
+main:not(.still) .fx-chips a:nth-child(6){animation-delay:0s;animation-delay:-5.5s}
+main:not(.still) .fx-chips a:hover,main:not(.still) .fx-chips a:focus-visible{animation:fx-bubble-bob 2.6s ease-in-out infinite}
+@keyframes fx-chip-idle{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@keyframes fx-bubble-bob{0%,100%{translate:0 -6px}50%{translate:0 -11px}}
+
+/* ---------- داک شیشه‌ای: حباب کوچک ---------- */
+.fx-dock a,.fx-dock button{transform:perspective(520px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.fx-dock a:hover,.fx-dock button:hover{scale:1.1}
+
+/* ---------- بخش آمار ---------- */
+.stats-section{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  padding:34px 0 6px;max-width:1400px;margin:0 auto;
+}
+.stat-card{
+  position:relative;overflow:hidden;border-radius:21px;padding:26px 24px;
+  background:linear-gradient(140deg,#a5cbfc14,#a5cbfc04);border:1px solid #b4d9ff26;
+  box-shadow:inset 0 1px 0 #ffffff1c;
+}
+.stat-card strong{
+  display:block;font-family:Lalezar,sans-serif;font-size:44px;line-height:1.15;color:#eaf4ff;
+  text-shadow:0 0 34px #9dccff40;font-variant-numeric:tabular-nums;
+}
+.stat-card span.stat-label{display:block;font-size:18px;color:#b4d9ff;margin-top:2px}
+.stat-card p{font-size:16px;line-height:1.8;color:#9db0cd;margin:10px 0 0}
+.stat-card .stat-glyph{
+  position:absolute;left:18px;top:16px;font-size:22px;color:#b4d9ff59;
+  animation:fx-float-b 9s ease-in-out infinite;
+}
+
+/* ---------- بخش ابزارها ---------- */
+.tools-section{padding:86px 0 30px}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.tool-card{
+  position:relative;overflow:hidden;border-radius:21px;padding:26px 24px;
+  display:flex;flex-direction:column;gap:10px;
+  background:linear-gradient(140deg,#a5cbfc11,#a5cbfc04);border:1px solid #b4d9ff24;
+  box-shadow:inset 0 1px 0 #ffffff1a;transition:translate .4s var(--fx-ease);
+}
+.tool-card:hover{translate:0 -6px}
+.tool-badge{
+  align-self:flex-start;font-size:14px;color:#0d1a33;background:linear-gradient(140deg,#d0e7ff,#9dc6f5);
+  border-radius:20px;padding:3px 12px;
+}
+.tool-card h3{font-family:Lalezar,sans-serif;font-size:26px;font-weight:400;margin:0;color:#eef5ff}
+.tool-card p{font-size:17px;line-height:1.85;color:#a8bad6;margin:0}
+.tool-card footer{
+  all:unset;display:flex;align-items:center;gap:8px;font-size:16px;color:#b4d9ff;margin-top:6px;
+}
+.tool-card:hover footer{color:#eaf4ff}
+
+/* ---------- بخش نمونه‌کدها ---------- */
+.showcase-section{padding:86px 0 30px}
+.showcase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.showcase-card{
+  position:relative;overflow:hidden;border-radius:21px;border:1px solid #b4d9ff26;
+  background:linear-gradient(140deg,#0d1a3499,#0a142a99);box-shadow:inset 0 1px 0 #ffffff1a,0 26px 60px -34px #000;
+  transition:translate .4s var(--fx-ease);
+}
+.showcase-card:hover{translate:0 -6px}
+.showcase-bar{
+  display:flex;align-items:center;justify-content:space-between;padding:13px 17px;
+  border-bottom:1px solid #b4d9ff1c;background:#a5cbfc0d;
+}
+.showcase-bar span{font-family:"JetBrains Mono",monospace;font-size:13px;color:#b1c5df;direction:ltr}
+.showcase-bar i{display:flex;gap:5px}
+.showcase-bar i b{width:8px;height:8px;border-radius:50%;background:#8fa9cd55;border:1px solid #b4d9ff1c}
+.showcase-bar i b:first-child{background:#b4d9ff88}
+.showcase-card pre{
+  margin:0;padding:18px 19px;direction:ltr;text-align:left;overflow:auto;
+  font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.85;color:#c9dbf3;
+}
+.showcase-card pre b{color:#a7d8ff;font-weight:500}
+.showcase-card pre em{color:#c9a8ff;font-style:normal}
+.showcase-card pre u{color:#8fe0c0;text-decoration:none}
+.showcase-card > p{font-size:17px;line-height:1.85;color:#a8bad6;margin:0;padding:16px 19px 20px}
+main:not(.still) .showcase-card pre{animation:fx-code-in 1.1s var(--fx-ease) both}
+main:not(.still) .showcase-card:nth-child(2) pre{animation-delay:.12s}
+main:not(.still) .showcase-card:nth-child(3) pre{animation-delay:.24s}
+
+/* ---------- پرسش‌های پرتکرار ---------- */
+.faq-section{padding:86px 0 40px}
+.faq-list{display:flex;flex-direction:column;gap:12px;margin-top:34px;max-width:940px}
+.faq-item{
+  position:relative;border-radius:19px;overflow:hidden;
+  background:linear-gradient(130deg,#a5cbfc0e,#a5cbfc03);border:1px solid #b4d9ff22;
+  box-shadow:inset 0 1px 0 #ffffff12;transition:border-color .4s ease,background .4s ease;
+}
+.faq-item[open]{border-color:#b4d9ff50;background:linear-gradient(130deg,#a5cbfc15,#a5cbfc04)}
+.faq-item summary{
+  list-style:none;cursor:pointer;padding:22px 25px;display:flex;align-items:center;gap:16px;
+  font-family:Lalezar,sans-serif;font-size:22px;color:#eaf4ff;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-plus{
+  margin-right:auto;width:32px;height:32px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;
+  border:1px solid #b4d9ff35;background:linear-gradient(140deg,#b4d9ff26,#b4d9ff06);color:#dcecff;
+  transition:transform .45s var(--fx-ease),background .3s ease;
+}
+.faq-item[open] .faq-plus{transform:rotate(135deg);background:linear-gradient(140deg,#d0e7ff,#8dbdff);color:#0d1a33}
+.faq-body{padding:0 25px 22px;animation:fx-content-in .5s var(--fx-ease) both}
+.faq-body p{font-size:18px;line-height:1.95;color:#aebfda;margin:0}
+
+/* ---------- فوتر ---------- */
+footer{border-top-color:#b4d9ff1f}
+.footer-left{animation:fx-float-a 9s ease-in-out infinite}
+.small-seed{filter:drop-shadow(0 0 10px #b4d9ff77)}
+
+/* ---------- پخش ذرات کلیک ---------- */
+.fx-ripple{
+  position:fixed;z-index:70;pointer-events:none;width:14px;height:14px;margin:-7px 0 0 -7px;
+  border-radius:50%;border:1.5px solid #d9edffcc;animation:fx-ripple .75s var(--fx-ease) forwards;
+}
+
+/* ---------- کی‌فریم‌ها ---------- */
+@keyframes fx-aurora-spin{to{rotate:360deg}}
+@keyframes fx-aurora-breathe{0%,100%{opacity:.45;scale:1}50%{opacity:.72;scale:1.05}}
+@keyframes fx-shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes fx-draw{to{stroke-dashoffset:0}}
+@keyframes fx-pulse-dot{0%,100%{opacity:1;text-shadow:0 0 22px #b4d9ff66}50%{opacity:.6;text-shadow:0 0 40px #b4d9ffcc}}
+@keyframes fx-beacon{0%,100%{box-shadow:0 0 0 4px #b4d9ff10,0 0 10px #b4d9ff77}50%{box-shadow:0 0 0 9px #b4d9ff08,0 0 22px #b4d9ffcc}}
+@keyframes fx-spin{to{rotate:360deg}}
+@keyframes fx-spin-rev{to{rotate:-360deg}}
+@keyframes fx-rise{from{opacity:0;translate:0 26px}to{opacity:1;translate:0 0}}
+@keyframes fx-rise-soft{from{opacity:0;translate:0 40px;scale:.97}to{opacity:1;translate:0 0;scale:1}}
+@keyframes fx-pop{from{opacity:0;scale:.9}to{opacity:1;scale:1}}
+@keyframes fx-content-in{from{opacity:0;translate:0 -14px}to{opacity:1;translate:0 0}}
+@keyframes fx-option-on{0%{scale:.96}60%{scale:1.02}100%{scale:1}}
+@keyframes fx-sheen{0%{right:-60%}55%,100%{right:130%}}
+@keyframes fx-grid{to{background-position:0 0,74px 0}}
+@keyframes fx-breathe{0%,100%{opacity:.55;scale:.96}50%{opacity:.95;scale:1.04}}
+@keyframes fx-scan{0%,100%{translate:0 0;opacity:.25}50%{translate:0 190px;opacity:.6}}
+@keyframes fx-star{0%,100%{transform:rotate(0) scale(1);opacity:.55}50%{transform:rotate(18deg) scale(1.12);opacity:.95}}
+@keyframes fx-marquee{from{translate:0 0}to{translate:-50% 0}}
+@keyframes fx-code-in{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes fx-ripple{from{opacity:.9;scale:.4}to{opacity:0;scale:6}}
+
+/* ---------- پاسخ‌گویی ---------- */
+@media(max-width:1100px){
+  .stats-section{grid-template-columns:repeat(2,1fr)}
+  .tools-grid,.showcase-grid{grid-template-columns:1fr 1fr}
+  .fx-dock{left:12px;bottom:16px;padding:9px 8px;gap:8px}
+  .fx-dock a,.fx-dock button{width:38px;height:38px;border-radius:12px;font-size:16px}
+}
+@media(max-width:900px){
+  .fx-dock{display:none}
+}
+@media(max-width:760px){
+  .fx-chips{gap:8px;padding:18px 0 2px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .fx-chips::-webkit-scrollbar{display:none}
+  .fx-chips a{font-size:15px;padding:7px 13px;white-space:nowrap}
+  .stats-section{grid-template-columns:1fr 1fr;gap:12px;padding-top:24px}
+  .stat-card{padding:19px 17px;border-radius:17px}
+  .stat-card strong{font-size:34px}
+  .stat-card span.stat-label{font-size:16px}
+  .stat-card p{font-size:15px}
+  .tools-grid,.showcase-grid{grid-template-columns:1fr}
+  .tools-section,.showcase-section,.faq-section{padding-top:60px}
+  .ticker span{font-size:18px;gap:24px}
+  .ticker-track{gap:24px;animation-duration:26s}
+  .faq-item summary{font-size:19px;padding:18px}
+  .faq-body{padding:0 18px 18px}
+  .faq-body p{font-size:17px}
+  .fx-dock{left:auto;right:50%;translate:50% 0;bottom:12px;flex-direction:row;border-radius:20px}
+  .fx-dock.fx-ready{translate:50% 0}
+  .fx-dock a::after,.fx-dock button::after{display:none}
+  .hero::before{display:none}
+  .cursor-glow{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .grain::before,main::after,.ticker-track,.editor::after,.fx-chips a{animation:none!important}
+  .fx-canvas,.cursor-glow{display:none}
+}
